@@ -1,0 +1,14 @@
+{
+  "name": "등불 심연",
+  "short_name": "등불 심연",
+  "description": "기름이 닳기 전에 심연 8층의 불씨를 찾는 턴제 로그라이크.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08090d",
+  "theme_color": "#08090d",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

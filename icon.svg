@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="등불 심연">
+  <defs>
+    <radialGradient id="glow" cx=".5" cy=".55" r=".5">
+      <stop offset="0" stop-color="#ffb347" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffb347" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#08090d"/>
+  <circle cx="32" cy="35" r="26" fill="url(#glow)"/>
+  <path d="M26 14h12M32 10v4" stroke="#8a7350" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M24 18h16l-2 4H26z" fill="#5d4b36"/>
+  <rect x="25" y="22" width="14" height="20" rx="3" fill="#2a2119" stroke="#8a7350" stroke-width="2"/>
+  <path d="M32 26c3 4 3.5 6.5 3.5 8.5a3.5 3.5 0 0 1-7 0c0-2 .5-4.5 3.5-8.5z" fill="#ffb347"/>
+  <path d="M32 31c1.2 1.6 1.4 2.6 1.4 3.4a1.4 1.4 0 0 1-2.8 0c0-.8.2-1.8 1.4-3.4z" fill="#fff2cf"/>
+  <path d="M23 42h18l-2 4H25z" fill="#5d4b36"/>
+</svg>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>등불 심연</title>
+<meta name="description" content="기름이 닳기 전에 심연 8층의 불씨를 찾는 턴제 로그라이크. 키보드만으로 끝까지 할 수 있어요.">
+<meta name="theme-color" content="#08090d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="등불 심연">
+<meta property="og:description" content="기름이 닳기 전에 심연 8층의 불씨를 찾는 턴제 로그라이크.">
+<meta property="og:locale" content="ko_KR">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="등불 심연">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="hud" aria-label="상태">
+    <div class="chip"><span>층</span><b id="hDepth">B1</b></div>
+    <div class="bar hp" title="체력"><i id="hpFill"></i><span id="hpTxt">HP</span></div>
+    <div class="bar oil" title="기름"><i id="oilFill"></i><span id="oilTxt">기름</span></div>
+    <div class="chip"><span>Lv</span><b id="hLv">1</b><small id="hXp"></small></div>
+    <div class="chip"><span>공</span><b id="hAtk">3</b><span>방</span><b id="hDef">0</b></div>
+    <button class="icon-btn" id="helpBtn" type="button" aria-label="도움말 (?)" title="도움말 (?)">?</button>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="던전 지도"></canvas>
+  </div>
+
+  <ol class="log" id="log" aria-live="polite"></ol>
+
+  <div class="inv" id="inv" role="group" aria-label="소지품">
+    <button type="button" data-use="bandage"><kbd>1</kbd>붕대 <b id="nBandage">0</b></button>
+    <button type="button" data-use="oil"><kbd>2</kbd>기름병 <b id="nOil">0</b></button>
+    <button type="button" data-use="flash"><kbd>3</kbd>섬광탄 <b id="nFlash">0</b></button>
+    <button type="button" data-act="descend"><kbd>&gt;</kbd>내려가기</button>
+  </div>
+
+  <div class="pad" id="pad" aria-hidden="true">
+    <button type="button" data-dir="-1,-1">↖</button><button type="button" data-dir="0,-1">↑</button><button type="button" data-dir="1,-1">↗</button>
+    <button type="button" data-dir="-1,0">←</button><button type="button" data-act="wait">대기</button><button type="button" data-dir="1,0">→</button>
+    <button type="button" data-dir="-1,1">↙</button><button type="button" data-dir="0,1">↓</button><button type="button" data-dir="1,1">↘</button>
+    <button type="button" class="wide" data-act="rest">쉬기</button>
+  </div>
+
+  <p class="keys" id="keys">이동 <kbd>방향키</kbd><kbd>WASD</kbd><kbd>hjkl</kbd> · 대각 <kbd>QEZC</kbd><kbd>yubn</kbd><kbd>숫자패드</kbd> · 대기 <kbd>Space</kbd> · 쉬기 <kbd>R</kbd> · 내려가기 <kbd>&gt;</kbd> · 도움말 <kbd>?</kbd></p>
+</div>
+
+<!-- 시작 -->
+<div class="modal" id="mTitle" role="dialog" aria-labelledby="tTitle">
+  <div class="box">
+    <h1 id="tTitle">등불 심연</h1>
+    <p class="lead">기름이 닳기 전에 <b>심연 8층의 불씨</b>를 찾으세요.<br>걸을수록, 쉴수록 등불이 타들어 갑니다.</p>
+    <div class="choices">
+      <button type="button" id="btnContinue" hidden><kbd>C</kbd>이어하기 <small id="contInfo"></small></button>
+      <button type="button" id="btnNew"><kbd>Enter</kbd>새 탐험</button>
+      <button type="button" id="btnHelp2"><kbd>?</kbd>조작법</button>
+    </div>
+    <p class="rec" id="rec"></p>
+  </div>
+</div>
+
+<!-- 레벨 업 -->
+<div class="modal" id="mLevel" role="dialog" aria-labelledby="lvTitle" hidden>
+  <div class="box">
+    <h2 id="lvTitle">레벨 업!</h2>
+    <p class="lead">하나를 고르세요.</p>
+    <div class="choices" id="perkList"></div>
+  </div>
+</div>
+
+<!-- 도움말 -->
+<div class="modal" id="mHelp" role="dialog" aria-labelledby="hTitle" hidden>
+  <div class="box wide">
+    <h2 id="hTitle">조작법</h2>
+    <table class="help">
+      <tr><th>이동 · 공격</th><td><kbd>←↑→↓</kbd> <kbd>WASD</kbd> <kbd>hjkl</kbd> — 적 쪽으로 움직이면 공격</td></tr>
+      <tr><th>대각선</th><td><kbd>Q</kbd><kbd>E</kbd><kbd>Z</kbd><kbd>C</kbd> · <kbd>y</kbd><kbd>u</kbd><kbd>b</kbd><kbd>n</kbd> · 숫자패드 <kbd>7</kbd><kbd>9</kbd><kbd>1</kbd><kbd>3</kbd></td></tr>
+      <tr><th>대기</th><td><kbd>Space</kbd> <kbd>.</kbd> 숫자패드 <kbd>5</kbd></td></tr>
+      <tr><th>쉬기</th><td><kbd>R</kbd> — 다 나을 때까지 대기. 적이 보이면 멈춤 (기름은 계속 닳음)</td></tr>
+      <tr><th>소지품</th><td><kbd>1</kbd> 붕대 · <kbd>2</kbd> 기름병 · <kbd>3</kbd> 섬광탄 (보이는 적 기절)</td></tr>
+      <tr><th>내려가기</th><td>계단(<span class="g-stairs">&gt;</span>) 위에서 <kbd>&gt;</kbd> 또는 <kbd>Enter</kbd></td></tr>
+    </table>
+    <ul class="legend">
+      <li><span class="g-player">@</span> 나</li>
+      <li><span style="color:#ffb347">!</span> 기름병</li>
+      <li><span style="color:#ff8a8a">+</span> 붕대</li>
+      <li><span style="color:#fff59e">*</span> 섬광탄</li>
+      <li><span style="color:#c9b38a">?</span> 낡은 지도</li>
+      <li><span style="color:#9fd3ff">)</span> 무기</li>
+      <li><span style="color:#b0e0a8">[</span> 갑옷</li>
+    </ul>
+    <p class="lead small">등불이 밝을수록 멀리 보입니다. 기름이 0이 되면 어둠이 체력을 갉아먹어요. 적은 어둠 속에서도 당신의 불빛을 봅니다.</p>
+    <div class="choices"><button type="button" id="btnHelpClose"><kbd>Esc</kbd>닫기</button></div>
+  </div>
+</div>
+
+<!-- 끝 -->
+<div class="modal" id="mEnd" role="dialog" aria-labelledby="eTitle" hidden>
+  <div class="box">
+    <h2 id="eTitle"></h2>
+    <p class="lead" id="eCause"></p>
+    <dl class="stats" id="eStats"></dl>
+    <div class="choices"><button type="button" id="btnAgain"><kbd>Enter</kbd>다시 탐험</button></div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
