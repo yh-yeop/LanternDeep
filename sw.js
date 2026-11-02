@@ -1,6 +1,6 @@
 /* 오프라인 캐시. 캐시가 있으면 바로 주고 뒤에서 새 걸 받아 갈아끼움.
    파일을 바꾸면 VERSION 을 올려서 옛 캐시를 지운다. */
-const VERSION = 'lantern-deep-v2';
+const VERSION = 'lantern-deep-v3';
 const ASSETS = ['./', './index.html', './style.css', './game.js', './icon.svg', './manifest.json'];
 
 self.addEventListener('install', (e) => {
